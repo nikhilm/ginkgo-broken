@@ -38,22 +38,51 @@ starts failing too.
     cd tests
     go test -v . # everything works!
     go test -v . # everything works!
+
+These commands output:
+
+    === RUN   TestYo
+    YOYOYO
+    --- PASS: TestYo (0.00s)
+    PASS
+    ok      github.com/nikhilm/ginkgo-broken/tests  0.006s
+
+Let's continue:
+
     ginkgo -v . # everything works!
+
+This works too:
+
+    === RUN   TestYo
+    YOYOYO
+    --- PASS: TestYo (0.00s)
+    PASS
+
+    Ginkgo ran 1 suite in 593.024519ms
+    Test Suite Passed
+
+But it has broken something, because from this point on:
+
     go test -v . 
 
-Output from last command:
+leads to:
 
     # github.com/nikhilm/ginkgo-broken/tests_test
     ./project_test.go:6: can't find import:
     "github.com/nikhilm/ginkgo-broken/project"
     FAIL    github.com/nikhilm/ginkgo-broken/tests [build failed]
 
-Expected output:
-
-    tests should pass
+Expected output: tests should always pass
 
 Once the ginkgo command is run, this directory is broken "forever". I have not
 yet been able to isolate what leads to the go runtime considering it "fixed".
-Things I've found that work:
 
+Things I've found that work as a "fix":
+
+* Touching `project/main.go`.
 * Cloning repo again.
+
+Things I've found that do not work as a "fix":
+
+* Starting a new shell.
+* Touching `test/project_test.go`
